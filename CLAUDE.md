@@ -6,9 +6,15 @@ Conception puis développement d'une application web de gestion locative immobil
 
 Le document de référence est `docs/cahier-des-charges.md` (version 1.0, juillet 2026). **Toute décision de conception doit être traçable vers une exigence du cahier des charges.** En cas d'ambiguïté ou de silence du CDC : poser la question au client, ne jamais inventer.
 
-## Phase actuelle : CONCEPTION
+## Phase actuelle : DÉVELOPPEMENT
 
-Nous produisons le **dossier de conception** avant tout développement. Le dossier comprend 16 sections :
+Le **dossier de conception** (16 sections, `dossier/`) est **validé au complet** (voir `dossier/00-journal-decisions.md`, 40 décisions actées) et assemblé (`dossier/DOSSIER-CONCEPTION-COMPLET.md` / `.docx`). Toute règle métier, tout écran, toute exigence s'y trouve déjà tranché — ne pas rouvrir ces décisions sans une raison explicite du client ; en cas de nouvelle question métier, l'ajouter au journal des décisions comme les précédentes.
+
+Le **cadrage technique** (`technique/00-cadrage-technique.md`) traduit ce dossier en plan d'implémentation : architecture, structure du dépôt, environnements, CI/CD et plan de sprints dérivé des exigences EF-XX/ENF-XX de la section 15 du dossier.
+
+Le **Sprint 0** (scaffolding) est réalisé : projet Next.js (App Router, TypeScript, Tailwind), schéma Prisma dérivé du MLD (section 10), authentification NextAuth avec les 4 profils, matrice de permissions (section 14.1), pipeline CI GitHub Actions. Le développement des modules métier (Sprints 1+) suit le plan de sprints du cadrage technique §5.
+
+Rappel des 16 sections du dossier de conception (référence, pas à refaire) :
 
 1. Présentation de l'agence
 2. Contexte et objectifs
@@ -38,13 +44,13 @@ Nous produisons le **dossier de conception** avant tout développement. Le dossi
 
 Ne jamais rédiger plusieurs sections d'un coup sans validation intermédiaire. Ne jamais sauter une étape.
 
-Utiliser le skill `conception-dossier` qui détaille, pour chaque section, les questions à poser et le plan de rédaction attendu.
+Cette méthode reste la référence si une section du dossier doit être rouverte (évolution de périmètre, question métier oubliée). Utiliser le skill `conception-dossier` dans ce cas.
 
 ## Skills du projet
 
-- `conception-dossier` — workflow étape par étape du dossier de conception (questions, validation, plan de chaque section).
-- `regles-metier` — règles de gestion extraites du CDC (source de vérité métier : facturation le 25, validations du gérant, archivage 1 an, etc.).
-- `modele-donnees` — base pour le MCD/MLD/dictionnaire : entités, relations et attributs identifiés dans le CDC.
+- `conception-dossier` — workflow étape par étape du dossier de conception (questions, validation, plan de chaque section). Sert désormais surtout à rouvrir/amender une section déjà validée.
+- `regles-metier` — règles de gestion extraites du CDC (source de vérité métier : facturation le 25, validations du gérant, archivage 1 an, etc.). Traduites en code dans `src/lib/` (ex. `permissions.ts`) — toute évolution de règle passe d'abord par ce skill/le dossier, pas par le code.
+- `modele-donnees` — base pour le MCD/MLD/dictionnaire : entités, relations et attributs identifiés dans le CDC. Le schéma `prisma/schema.prisma` en est la traduction directe.
 - `redaction-livrables` — conventions de rédaction, formats (Markdown, Mermaid), nommage des fichiers, génération des exports.
 
 ## Décisions techniques figées par le CDC
@@ -81,18 +87,29 @@ Utiliser le skill `conception-dossier` qui détaille, pour chaque section, les q
 ├── CLAUDE.md
 ├── docs/
 │   └── cahier-des-charges.md      # Référence — ne pas modifier
-├── dossier/                        # Dossier de conception (livrable)
+├── dossier/                        # Dossier de conception (livrable, validé)
 │   ├── 00-journal-decisions.md
 │   ├── 01-presentation-agence.md
 │   ├── ...
-│   └── 16-evolutions-futures.md
-└── .claude/skills/                 # Skills du projet
+│   ├── 16-evolutions-futures.md
+│   └── DOSSIER-CONCEPTION-COMPLET.md / .docx
+├── technique/                      # Cadrage technique du développement
+│   └── 00-cadrage-technique.md
+├── prisma/
+│   └── schema.prisma                # Dérivé de dossier/10-mld.md
+├── src/
+│   ├── app/                          # Next.js App Router (pages + API routes)
+│   ├── lib/                          # prisma.ts, auth.ts, permissions.ts, ...
+│   └── types/
+├── tests/
+├── .github/workflows/                # CI/CD
+└── .claude/skills/                   # Skills du projet
 ```
 
 ## Règles générales
 
-- Tout le contenu produit est en **français**.
+- Tout le contenu produit (dossier de conception, commentaires de code) est en **français** ; noms de variables/fonctions en anglais (profil TECHNOLOGIE ET INNOVATION AFRIK).
 - Diagrammes en **Mermaid** intégrés au Markdown (cas d'utilisation, processus BPMN-like, MCD/MLD en `erDiagram`).
-- Citer la section du CDC en source de chaque exigence (ex. « CDC §8.1 »).
+- Citer la section du CDC ou la décision du journal en source de chaque exigence (ex. « CDC §8.1 », « D-027 »).
 - Aucune donnée personnelle réelle dans les exemples : utiliser des données fictives.
-- La phase de développement ne démarre qu'après validation complète du dossier de conception.
+- Toute règle métier codée (ex. `src/lib/permissions.ts`, moteur de facturation) doit rester traçable vers le dossier de conception (section 05 — règles RG-XX, section 14 — permissions). Ne jamais coder une règle qui contredit le dossier sans d'abord faire trancher et consigner la décision.
