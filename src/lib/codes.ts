@@ -43,3 +43,25 @@ export async function genererNumeroFacture(): Promise<string> {
   }
   throw new Error("Impossible de générer un numéro de facture unique.");
 }
+
+// RG-P03 : référence de paiement unique.
+export async function genererReferencePaiement(): Promise<string> {
+  for (let tentative = 0; tentative < 5; tentative++) {
+    const total = await prisma.paiement.count();
+    const reference = `PAI-${String(total + 1 + tentative).padStart(6, "0")}`;
+    const existe = await prisma.paiement.findUnique({ where: { reference } });
+    if (!existe) return reference;
+  }
+  throw new Error("Impossible de générer une référence de paiement unique.");
+}
+
+// RG-P05 : numéro de quittance unique.
+export async function genererNumeroQuittance(): Promise<string> {
+  for (let tentative = 0; tentative < 5; tentative++) {
+    const total = await prisma.quittance.count();
+    const numero = `QUI-${String(total + 1 + tentative).padStart(6, "0")}`;
+    const existe = await prisma.quittance.findUnique({ where: { numero } });
+    if (!existe) return numero;
+  }
+  throw new Error("Impossible de générer un numéro de quittance unique.");
+}
