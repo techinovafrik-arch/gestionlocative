@@ -33,6 +33,10 @@ describe("permissions", () => {
     expect(peut("gestionnaire", "utilisateurs", "creer")).toBe(false);
   });
 
+  it("autorise le gestionnaire locatif à consulter les contrats (§14.1, corrigé Sprint 9)", () => {
+    expect(peut("gestionnaire", "contrats", "lire")).toBe(true);
+  });
+
   it("réserve l'import de données à l'administrateur (D-041)", () => {
     expect(peut("administrateur", "import", "creer")).toBe(true);
     expect(peut("administrateur", "import", "lire")).toBe(true);

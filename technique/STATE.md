@@ -5,7 +5,10 @@
 
 ## Sprint courant
 
-**Sprint 9 — Recette, corrections, mise en production** : à démarrer.
+**Sprint 9 — Recette, corrections, mise en production** : recette technique
+et livrables terminés ; la mise en production réelle reste bloquée par le
+choix du VPS (point ouvert #4) — procédure prête, voir
+`technique/11-deploiement.md`.
 
 ## Suivi des sprints
 
@@ -20,7 +23,7 @@
 | 6 | Notifications multi-canal (architecture posée, fournisseurs en stub) | ✅ Fait |
 | 7 | Rapports et tableau de bord | ✅ Fait |
 | 8 | Import Excel initial, durcissement sécurité | ✅ Fait |
-| 9 | Recette, corrections, mise en production | ⏳ À faire |
+| 9 | Recette, corrections, mise en production | ✅ Recette faite — déploiement en attente du VPS |
 
 Détail des exigences couvertes : voir `dossier/15-cdcf.md` (EF-01 à EF-32,
 ENF-01 à ENF-09). Tous les EF **Must** sont implémentés.
@@ -73,6 +76,30 @@ ENF-01 à ENF-09). Tous les EF **Must** sont implémentés.
   fonctionnel côté écriture depuis les sprints précédents (RG-U03) ; il
   manquait l'écran de consultation prévu en section 12 du dossier.
 
+### Sprint 9 — précisions
+
+- **Recette technique** (`technique/09-recette.md`) : scénario de bout en
+  bout réel (HTTP, cookies, 3 profils) rejouant le cycle de vie complet
+  bien → contrat → validation → facturation → paiement → clôture → caution,
+  en plus des 12 tests unitaires et 46 tests d'intégration. Chaque EF/ENF de
+  `dossier/15-cdcf.md` est mappé à sa vérification (test automatisé, étape
+  du scénario, ou sprint antérieur).
+- **Anomalie trouvée et corrigée** : le Gestionnaire locatif n'avait pas
+  accès en lecture aux contrats (`src/lib/permissions.ts` omettait `lire`
+  pour ce profil sur la ressource `contrats`, contrairement à
+  `dossier/14-securite-profils.md §14.1`) — menu et PDF contrat
+  inaccessibles pour l'utilisateur principal au quotidien. Corrigé, testé
+  (`tests/unit/permissions.test.ts`), revérifié en direct.
+- **Guide utilisateur** (`technique/10-guide-utilisateur.md` /
+  `.docx`) : support de formation par profil (critère de réception CDC §21
+  — « comptes créés, formation réalisée »). Généré en `.docx` via pandoc
+  (même méthode que `dossier/DOSSIER-CONCEPTION-COMPLET.docx`).
+- **Runbook de mise en production** (`technique/11-deploiement.md`) :
+  procédure complète (provisionnement VPS, PostgreSQL, Nginx + Let's
+  Encrypt, activation du job `deploy` de la CI, crontab des 4 endpoints
+  `/api/cron/*` + sauvegarde, checklist post-déploiement, rollback) — prête
+  à exécuter dès le VPS choisi, aucune étape ne peut être testée avant.
+
 ## Environnement de développement local
 
 - **PostgreSQL 17** installé localement (Windows), service `postgresql-x64-17`.
@@ -108,6 +135,13 @@ Toujours « à trancher plus tard » — sans impact sur le code déjà écrit
 
 ## Prochaine action
 
-Sprint 9 : recette (jeu d'essai complet couvrant les 32 EF), corrections
-issues de la recette, préparation de la mise en production (VPS restant à
-choisir — point ouvert #4, condition du job `deploy` de la CI).
+Le développement des 9 sprints est terminé. Il ne reste plus que des actions
+côté agence/hébergement, toutes documentées et prêtes à exécuter dès
+disponibles :
+
+1. Trancher les points ouverts 1-5 (`§ ci-dessous`), en particulier le VPS
+   (#4) qui conditionne la mise en production.
+2. Suivre `technique/11-deploiement.md` une fois le VPS disponible.
+3. Diffuser `technique/10-guide-utilisateur.docx` et organiser la formation
+   avec l'agence (dernier critère de réception CDC §21 non encore réalisé,
+   car il nécessite la présence de l'agence).

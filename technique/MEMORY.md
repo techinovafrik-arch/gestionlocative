@@ -125,6 +125,21 @@ Date` — JS attend `MM/DD/YYYY` ou de l'ISO. Solution dans
 `Date`/ISO. À réutiliser pour tout futur champ date alimenté depuis un
 fichier Excel (ne pas revenir à `z.coerce.date()` nu sur ce genre d'entrée).
 
+## Les tests d'intégration ne testent pas la matrice de permissions
+
+`tests/integration/*.test.ts` appelle directement les fonctions de
+`src/lib/*` (facturation, paiements, etc.), en contournant les routes API et
+donc `requirePermission()`/`peut()`. Un profil peut donc avoir une fonction
+métier entièrement testée et pourtant être bloqué en pratique par la
+matrice de `src/lib/permissions.ts` si celle-ci diverge de
+`dossier/14-securite-profils.md §14.1` (cas réel trouvé au Sprint 9 : le
+Gestionnaire locatif n'avait pas `lire` sur `contrats`, alors que c'est
+l'utilisateur principal du module — invisible tant qu'aucun test ni
+vérification manuelle n'exerçait ce profil sur ce point d'entrée précis).
+Réflexe utile : à chaque ajout/modification de ressource dans
+`permissions.ts`, comparer ligne à ligne avec le tableau §14.1 plutôt que de
+supposer la cohérence.
+
 ## Vérification manuelle systématique
 
 Chaque sprint a été vérifié par un test HTTP réel (login via
