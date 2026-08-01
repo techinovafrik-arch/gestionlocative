@@ -21,3 +21,14 @@ export async function genererCodeLocataire(): Promise<string> {
   }
   throw new Error("Impossible de générer un code locataire unique.");
 }
+
+// RG-C02 : numéro de contrat unique.
+export async function genererNumeroContrat(): Promise<string> {
+  for (let tentative = 0; tentative < 5; tentative++) {
+    const total = await prisma.contrat.count();
+    const numero = `CTR-${String(total + 1 + tentative).padStart(6, "0")}`;
+    const existe = await prisma.contrat.findUnique({ where: { numero } });
+    if (!existe) return numero;
+  }
+  throw new Error("Impossible de générer un numéro de contrat unique.");
+}

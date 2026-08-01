@@ -49,7 +49,7 @@ const MATRICE: Record<Ressource, Partial<Record<ProfilUtilisateur, Action[]>>> =
     gestionnaire: ["supprimer"],
   },
   contrats: {
-    gestionnaire: ["creer"],
+    gestionnaire: ["creer", "modifier"],
     administrateur: ["lire"],
     gerant: ["lire"],
     consultation: ["lire"],

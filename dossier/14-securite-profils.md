@@ -13,6 +13,7 @@ Légende : **C** Création, **L** Lecture, **M** Modification, **S** Suppression
 | Locataires — consulter | L | L | L | L |
 | Locataires — archiver | S | — | S | — |
 | Contrats — créer | — | — | C | — |
+| Contrats — clôturer (initier, UC-08) | — | — | M | — |
 | Contrats — valider/activer | — | **V** | — | — |
 | Contrats — consulter | L | L | L | L |
 | Révision de loyer — proposer | — | C | C | — |

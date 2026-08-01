@@ -8,6 +8,7 @@ const LIENS = [
   { href: "/", label: "Tableau de bord" },
   { href: "/biens", label: "Biens", ressource: "biens" as const },
   { href: "/locataires", label: "Locataires", ressource: "locataires" as const },
+  { href: "/contrats", label: "Contrats", ressource: "contrats" as const },
   { href: "/utilisateurs", label: "Utilisateurs", ressource: "utilisateurs" as const },
 ];
 
