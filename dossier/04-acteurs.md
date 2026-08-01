@@ -17,7 +17,7 @@ Le système gère **quatre profils** (CDC §13.1). Chaque compte utilisateur por
 | | |
 |---|---|
 | Effectif actuel | 1 personne |
-| Responsabilités | Validation des opérations sensibles (activation de contrat, révision de loyer, retenue et remboursement de caution, correction de paiement), consultation des états financiers et rapports (CDC §13.1, §14) |
+| Responsabilités | Création et validation des contrats, enregistrement et validation des paiements, révision de loyer, retenue et remboursement de caution, consultation des états financiers et rapports (CDC §13.1, §14 ; création des contrats/paiements ajoutée par D-043) |
 | Fréquence d'usage | Régulière (validations, suivi financier) |
 
 ### Gestionnaire locatif
@@ -25,7 +25,7 @@ Le système gère **quatre profils** (CDC §13.1). Chaque compte utilisateur por
 | | |
 |---|---|
 | Effectif actuel | 1 personne (Gestionnaire actif) |
-| Responsabilités | Gestion opérationnelle : biens, locataires, contrats, factures, paiements (CDC §13.1) |
+| Responsabilités | Gestion opérationnelle : biens, locataires, factures (génération manuelle incluse, D-042) ; consultation seule des contrats et paiements depuis D-043 (CDC §13.1) |
 | Fréquence d'usage | Quotidienne — utilisateur principal de l'application |
 
 ### Consultation
@@ -50,9 +50,9 @@ Le système gère **quatre profils** (CDC §13.1). Chaque compte utilisateur por
 |---|---|---|---|---|
 | Biens | Gestion complète | Consultation | Gestion | Lecture |
 | Locataires | Gestion complète | Consultation | Gestion | Lecture |
-| Contrats | Gestion complète | Validation | Gestion (création) | Lecture |
-| Factures | Gestion complète | Consultation | Gestion | Lecture |
-| Paiements | Gestion complète | Validation (corrections) | Gestion | Lecture |
+| Contrats | Gestion complète | Gestion (création + validation) | Consultation | Lecture |
+| Factures | Gestion complète (génération manuelle incluse) | Consultation | Gestion (génération manuelle incluse) | Lecture |
+| Paiements | Gestion complète | Gestion (enregistrement + validation corrections) | Consultation | Lecture |
 | Cautions | Gestion complète | Validation (retenue/remboursement) | Gestion (suivi) | Lecture |
 | Gestion documentaire | Gestion complète | Consultation | Gestion | Lecture |
 | Notifications | Paramétrage | Réception | Réception | Réception (selon périmètre) |

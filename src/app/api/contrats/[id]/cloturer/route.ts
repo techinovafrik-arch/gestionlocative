@@ -6,9 +6,10 @@ import { contratClotureSchema } from "@/lib/validations/contrat";
 
 type Contexte = { params: Promise<{ id: string }> };
 
-// POST /api/contrats/[id]/cloturer — Gestionnaire locatif (UC-08, P6).
-// Libère le bien ; la décision finale sur la caution (remboursement ou
-// retenue) revient au gérant via /api/cautions/[id]/valider (RG-K03).
+// POST /api/contrats/[id]/cloturer — Gérant, Administrateur (UC-08, P6 ;
+// retiré au Gestionnaire locatif par D-043). Libère le bien ; la décision
+// finale sur la caution (remboursement ou retenue) revient au gérant via
+// /api/cautions/[id]/valider (RG-K03).
 export async function POST(request: NextRequest, { params }: Contexte) {
   try {
     const session = await requirePermission("contrats", "modifier");

@@ -27,7 +27,8 @@ export async function GET() {
   }
 }
 
-// POST /api/paiements — Gestionnaire locatif (RG-P01, RG-P06). Impute
+// POST /api/paiements — Gérant, Administrateur (RG-P01, RG-P06 ;
+// enregistrement retiré au Gestionnaire locatif par D-043). Impute
 // automatiquement sur la facture la plus ancienne due du locataire et
 // génère la quittance (RG-P05).
 export async function POST(request: NextRequest) {

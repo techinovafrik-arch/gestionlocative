@@ -44,6 +44,22 @@ describe("permissions", () => {
     expect(peut("consultation", "factures", "creer")).toBe(false);
   });
 
+  it("retire la création/modification des contrats et l'enregistrement des paiements au gestionnaire locatif, repris par gérant et administrateur (D-043)", () => {
+    expect(peut("gestionnaire", "contrats", "creer")).toBe(false);
+    expect(peut("gestionnaire", "contrats", "modifier")).toBe(false);
+    expect(peut("gestionnaire", "contrats", "lire")).toBe(true);
+    expect(peut("gestionnaire", "paiements", "creer")).toBe(false);
+    expect(peut("gestionnaire", "paiements", "lire")).toBe(true);
+
+    expect(peut("gerant", "contrats", "creer")).toBe(true);
+    expect(peut("gerant", "contrats", "modifier")).toBe(true);
+    expect(peut("gerant", "paiements", "creer")).toBe(true);
+
+    expect(peut("administrateur", "contrats", "creer")).toBe(true);
+    expect(peut("administrateur", "contrats", "modifier")).toBe(true);
+    expect(peut("administrateur", "paiements", "creer")).toBe(true);
+  });
+
   it("réserve l'import de données à l'administrateur (D-041)", () => {
     expect(peut("administrateur", "import", "creer")).toBe(true);
     expect(peut("administrateur", "import", "lire")).toBe(true);

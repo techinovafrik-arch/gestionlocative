@@ -49,10 +49,12 @@ const MATRICE: Record<Ressource, Partial<Record<ProfilUtilisateur, Action[]>>> =
     administrateur: ["supprimer"],
     gestionnaire: ["supprimer"],
   },
+  // D-043 : création/modification/clôture retirées au Gestionnaire locatif
+  // (garde uniquement "lire"), reprises par le Gérant et l'Administrateur.
   contrats: {
-    gestionnaire: ["creer", "modifier", "lire"],
-    administrateur: ["lire"],
-    gerant: ["lire"],
+    administrateur: ["creer", "modifier", "lire"],
+    gerant: ["creer", "modifier", "lire"],
+    gestionnaire: ["lire"],
     consultation: ["lire"],
   },
   "contrats.validation": {
@@ -73,10 +75,12 @@ const MATRICE: Record<Ressource, Partial<Record<ProfilUtilisateur, Action[]>>> =
     gestionnaire: ["lire", "creer"],
     consultation: ["lire"],
   },
+  // D-043 : enregistrement retiré au Gestionnaire locatif (garde "lire"),
+  // repris par le Gérant et l'Administrateur.
   paiements: {
-    gestionnaire: ["creer", "lire"],
-    administrateur: ["lire"],
-    gerant: ["lire"],
+    administrateur: ["creer", "lire"],
+    gerant: ["creer", "lire"],
+    gestionnaire: ["lire"],
     consultation: ["lire"],
   },
   "paiements.correction": {

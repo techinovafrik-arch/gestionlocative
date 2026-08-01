@@ -116,9 +116,9 @@ flowchart LR
 
 | | |
 |---|---|
-| Acteur | Gestionnaire locatif (création), Gérant (validation) |
+| Acteur | Gérant ou Administrateur (création), Gérant (validation) — création retirée au Gestionnaire locatif par D-043 |
 | Préconditions | Le bien est « Libre » et le locataire existe |
-| Scénario nominal | 1. Le gestionnaire crée le contrat (bien, locataire, dates, loyer, charges, caution, périodicité) → 2. Le contrat est soumis en attente de validation → 3. Le gérant examine et valide → 4. Le système active le contrat, passe le bien à « Occupé », génère le contrat PDF |
+| Scénario nominal | 1. Le Gérant ou l'Administrateur crée le contrat (bien, locataire, dates, loyer, charges, caution, périodicité) → 2. Le contrat est soumis en attente de validation → 3. Le gérant examine et valide → 4. Le système active le contrat, passe le bien à « Occupé », génère le contrat PDF |
 | Alternatives | Le gérant peut refuser la validation ; le contrat reste en attente pour correction |
 | Exceptions | Bien déjà occupé au moment de la validation → refus système |
 | Postconditions | Contrat actif (RG-C05), bien occupé, facturation possible |
@@ -138,9 +138,9 @@ flowchart LR
 
 | | |
 |---|---|
-| Acteur | Gestionnaire locatif |
+| Acteur | Gérant ou Administrateur — retiré au Gestionnaire locatif par D-043 |
 | Préconditions | Une ou plusieurs factures sont dues pour le locataire |
-| Scénario nominal | 1. Le gestionnaire sélectionne le locataire/la facture → 2. Il saisit le montant, le mode de paiement, la référence → 3. Le système impute le paiement sur la facture la plus ancienne due (RG-P06) → 4. Il met à jour le solde restant → 5. Il déclenche la génération de la quittance (UC-06) |
+| Scénario nominal | 1. L'agent sélectionne le locataire/la facture → 2. Il saisit le montant, le mode de paiement, la référence → 3. Le système impute le paiement sur la facture la plus ancienne due (RG-P06) → 4. Il met à jour le solde restant → 5. Il déclenche la génération de la quittance (UC-06) |
 | Alternatives | Paiement partiel : la facture reste « partiellement payée », le solde reste dû |
 | Exceptions | Montant saisi supérieur au solde total dû → alerte, confirmation requise |
 | Postconditions | État de la facture mis à jour, quittance générée |
@@ -171,9 +171,9 @@ flowchart LR
 
 | | |
 |---|---|
-| Acteur | Gestionnaire locatif (constat de sortie), Gérant (validation) |
+| Acteur | Gérant ou Administrateur (initiation — retiré au Gestionnaire locatif par D-043), Gérant (validation) |
 | Préconditions | Contrat actif, locataire en fin d'occupation |
-| Scénario nominal | 1. Le gestionnaire initie la clôture du contrat → 2. Il renseigne les éventuels motifs de retenue sur la caution → 3. Le gérant valide la décision (remboursement intégral ou retenue) → 4. Le système clôture le contrat (statut « Terminé »), libère le bien (« Libre »), solde la caution, archive le locataire (historique conservé, données personnelles purgées après 1 an) |
+| Scénario nominal | 1. Le Gérant ou l'Administrateur initie la clôture du contrat → 2. Il renseigne les éventuels motifs de retenue sur la caution → 3. Le gérant valide la décision (remboursement intégral ou retenue) → 4. Le système clôture le contrat (statut « Terminé »), libère le bien (« Libre »), solde la caution, archive le locataire (historique conservé, données personnelles purgées après 1 an) |
 | Alternatives | Résiliation anticipée : statut « Résilié » au lieu de « Terminé » |
 | Exceptions | Litige sur le montant de retenue → clôture bloquée jusqu'à décision du gérant |
 | Postconditions | Contrat clôturé, bien disponible, caution soldée (RG-K02, RG-K03) |

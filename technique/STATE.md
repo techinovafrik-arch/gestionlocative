@@ -28,6 +28,33 @@ choix du VPS (point ouvert #4) — procédure prête, voir
 Détail des exigences couvertes : voir `dossier/15-cdcf.md` (EF-01 à EF-32,
 ENF-01 à ENF-09). Tous les EF **Must** sont implémentés.
 
+## Évolutions hors sprint planifié (post-Sprint 9)
+
+Demandes du client après la clôture du plan de sprints initial — chacune
+tranchée et consignée dans `dossier/00-journal-decisions.md` avant codage :
+
+- **D-042** : génération manuelle d'une facture pour un contrat précis (hors
+  cycle automatique du 25), ouverte à l'Administrateur et au Gestionnaire
+  locatif. Réutilise le moteur existant (`genererFacturePourContrat` dans
+  `src/lib/facturation.ts`), aucune saisie libre de montant/période.
+- **D-043** : le Gestionnaire locatif perd la création/modification/clôture
+  des contrats et l'enregistrement des paiements (garde la consultation) ;
+  le Gérant et l'Administrateur reprennent ces actions. La validation d'un
+  contrat et la correction d'un paiement restent réservées au seul Gérant,
+  inchangées — un contrat créé par le Gérant peut donc être validé par ce
+  même Gérant (séparation créateur/validateur perdue pour ce cas précis,
+  accepté explicitement par le client). Aucun changement de code UI requis
+  au-delà de `src/lib/permissions.ts` : tous les boutons/pages concernés
+  (`/contrats/nouveau`, `/paiements/nouveau`, formulaire de clôture) sont
+  déjà conditionnés dynamiquement par `peut(profil, ressource, action)`.
+- Correction UI : suppression du thème sombre automatique hérité du gabarit
+  `create-next-app` (`src/app/globals.css`) qui rendait le texte illisible
+  sous OS/navigateur en mode sombre — l'application n'a jamais été conçue
+  en dark mode. Ajout d'un bouton œil (afficher/masquer) sur les champs mot
+  de passe et d'une réinitialisation de mot de passe par l'Administrateur
+  (`/utilisateurs`), en l'absence de fournisseur email choisi pour un
+  libre-service par lien.
+
 ### Sprint 7 — précisions
 
 - Tableau de bord (`/`) : indicateurs immobiliers/financiers/locatifs (CDC

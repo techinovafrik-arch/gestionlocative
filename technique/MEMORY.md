@@ -140,6 +140,19 @@ Réflexe utile : à chaque ajout/modification de ressource dans
 `permissions.ts`, comparer ligne à ligne avec le tableau §14.1 plutôt que de
 supposer la cohérence.
 
+## L'UI est déjà pilotée par la matrice de permissions — en tirer parti
+
+Chaque bouton/lien/page sensible (`/contrats/nouveau`, `/paiements/nouveau`,
+formulaire de clôture, validation, révision de loyer...) est conditionné
+par `peut(profil, ressource, action)` côté serveur (redirect) et côté
+rendu (affichage conditionnel), jamais par un test direct sur le profil
+(`if (profil === "gestionnaire")`). Conséquence pratique confirmée lors du
+retrait des droits contrats/paiements au Gestionnaire (D-043) : changer
+uniquement `src/lib/permissions.ts` a suffi à faire disparaître/apparaître
+les bons boutons pour les bons profils, sans toucher un seul composant.
+Réflexe à garder : ne jamais coder un contrôle de profil en dur dans un
+composant ou une route, toujours passer par `peut()`.
+
 ## Vérification manuelle systématique
 
 Chaque sprint a été vérifié par un test HTTP réel (login via

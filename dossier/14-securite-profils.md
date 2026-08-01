@@ -12,15 +12,14 @@ Légende : **C** Création, **L** Lecture, **M** Modification, **S** Suppression
 | Locataires — créer/modifier | C M | — | C M | — |
 | Locataires — consulter | L | L | L | L |
 | Locataires — archiver | S | — | S | — |
-| Contrats — créer | — | — | C | — |
-| Contrats — clôturer (initier, UC-08) | — | — | M | — |
+| Contrats — créer/modifier/clôturer (UC-08) | C M | C M | — | — |
 | Contrats — valider/activer | — | **V** | — | — |
 | Contrats — consulter | L | L | L | L |
 | Révision de loyer — proposer | — | C | C | — |
 | Révision de loyer — valider | — | **V** | — | — |
 | Factures — consulter/télécharger/envoyer | L | L | L | L |
 | Factures — générer manuellement (un contrat, hors cycle du 25) | C | — | C | — |
-| Paiements — enregistrer | — | — | C | — |
+| Paiements — enregistrer | C | C | — | — |
 | Paiements — corriger | — | **V** | — | — |
 | Paiements — consulter | L | L | L | L |
 | Cautions — suivre | L | L | M | L |
@@ -34,6 +33,16 @@ Légende : **C** Création, **L** Lecture, **M** Modification, **S** Suppression
 | Utilisateurs — gérer | C M S | — | — | — |
 | Journal d'audit — consulter | L | L | — | — |
 | Import de données (reprise initiale) — exécuter | C L | — | — | — |
+
+**Lignes modifiées hors sprint planifié (D-043)** : le Gestionnaire locatif
+perd la création/modification/clôture des contrats et l'enregistrement des
+paiements — il garde la consultation (lignes « — consulter »). Le Gérant et
+l'Administrateur reprennent conjointement ces actions. La validation d'un
+contrat et la correction d'un paiement restent réservées au seul Gérant,
+inchangées — un contrat créé par le Gérant peut donc être validé par ce même
+Gérant (perte de la séparation créateur/validateur qui existait avec le
+Gestionnaire, signalée dans le journal des décisions, non bloquante à la
+demande explicite du client).
 
 **Ligne ajoutée hors sprint planifié (D-042)** : génération manuelle d'une
 facture pour un contrat précis, en réutilisant exactement le moteur de

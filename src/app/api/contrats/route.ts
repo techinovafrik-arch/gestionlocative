@@ -24,7 +24,8 @@ export async function GET() {
   }
 }
 
-// POST /api/contrats — Gestionnaire locatif (RG-C01, RG-C05). Statut initial
+// POST /api/contrats — Gérant, Administrateur (RG-C01, RG-C05 ; création
+// retirée au Gestionnaire locatif par D-043). Statut initial
 // "brouillon" : en attente de validation par le gérant (UC-03).
 export async function POST(request: NextRequest) {
   try {
