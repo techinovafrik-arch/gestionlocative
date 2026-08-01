@@ -42,7 +42,14 @@ export function GenererFacture({ contrats }: { contrats: ContratOption[] }) {
     router.refresh();
   }
 
-  if (contrats.length === 0) return null;
+  if (contrats.length === 0) {
+    return (
+      <div className="mb-6 rounded-lg border border-slate-200 bg-white p-4 text-sm text-slate-500">
+        Générer une facture pour un contrat : aucun contrat actif à facturer
+        pour le moment.
+      </div>
+    );
+  }
 
   return (
     <form onSubmit={onSubmit} className="mb-6 flex flex-wrap items-end gap-3 rounded-lg border border-slate-200 bg-white p-4">
