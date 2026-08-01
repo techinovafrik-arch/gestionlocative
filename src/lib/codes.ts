@@ -32,3 +32,14 @@ export async function genererNumeroContrat(): Promise<string> {
   }
   throw new Error("Impossible de générer un numéro de contrat unique.");
 }
+
+// RG-F02 : numéro de facture unique.
+export async function genererNumeroFacture(): Promise<string> {
+  for (let tentative = 0; tentative < 5; tentative++) {
+    const total = await prisma.facture.count();
+    const numero = `FAC-${String(total + 1 + tentative).padStart(6, "0")}`;
+    const existe = await prisma.facture.findUnique({ where: { numero } });
+    if (!existe) return numero;
+  }
+  throw new Error("Impossible de générer un numéro de facture unique.");
+}

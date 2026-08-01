@@ -9,6 +9,7 @@ const LIENS = [
   { href: "/biens", label: "Biens", ressource: "biens" as const },
   { href: "/locataires", label: "Locataires", ressource: "locataires" as const },
   { href: "/contrats", label: "Contrats", ressource: "contrats" as const },
+  { href: "/factures", label: "Factures", ressource: "factures" as const },
   { href: "/utilisateurs", label: "Utilisateurs", ressource: "utilisateurs" as const },
 ];
 

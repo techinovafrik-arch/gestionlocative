@@ -1,6 +1,7 @@
 import { Document, Page, Text, View, StyleSheet, renderToBuffer } from "@react-pdf/renderer";
 import type { Prisma } from "@/generated/prisma";
 import { AGENCE } from "@/lib/agence";
+import { formaterDate, formaterFcfa } from "@/lib/pdf/formatage";
 
 const styles = StyleSheet.create({
   page: { padding: 40, fontSize: 11, fontFamily: "Helvetica" },
@@ -40,14 +41,6 @@ type ContratPourPdf = {
     telephonePrincipal: string;
   };
 };
-
-function formaterFcfa(montant: unknown) {
-  return `${Number(montant).toLocaleString("fr-FR")} FCFA`;
-}
-
-function formaterDate(date: Date) {
-  return new Date(date).toLocaleDateString("fr-FR");
-}
 
 const LIBELLES_PERIODICITE: Record<string, string> = {
   mensuelle: "mensuelle",
