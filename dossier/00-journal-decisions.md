@@ -45,3 +45,4 @@
 | D-038 | 31/07/2026 | 14 | Durée de session / déconnexion automatique ? | 30 minutes d'inactivité | Section 14 |
 | D-039 | 31/07/2026 | 14 | Fréquence et rétention des sauvegardes ? | Sauvegarde automatique quotidienne, rétention 30 jours | Section 14, architecture technique (VPS) |
 | D-040 | 31/07/2026 | 16 | Ordre de priorité et horizon des évolutions futures ? | Horizon moyen terme pour toutes ; ordre proposé : paiement en ligne, portail locataire, usage hors-ligne, connexion comptabilité, application mobile native, 2FA | Section 16 |
+| D-041 | 01/08/2026 | 14 | Qui peut exécuter l'import Excel de reprise de données (EF-32) ? | Administrateur seul (opération de démarrage à fort impact, absente de la matrice initiale) | Section 14, phase de développement (Sprint 8) |

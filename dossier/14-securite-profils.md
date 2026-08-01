@@ -32,6 +32,12 @@ Légende : **C** Création, **L** Lecture, **M** Modification, **S** Suppression
 | Tableau de bord — consulter | L | L | L | L |
 | Utilisateurs — gérer | C M S | — | — | — |
 | Journal d'audit — consulter | L | L | — | — |
+| Import de données (reprise initiale) — exécuter | C L | — | — | — |
+
+**Ligne ajoutée au Sprint 8 (D-041)** : la reprise de données via import Excel
+(EF-32, D-011) n'était pas couverte par la matrice initiale. Réservée à
+l'Administrateur seul, par cohérence avec « Utilisateurs — gérer » (opération
+de démarrage à fort impact, hors du flux métier courant des autres profils).
 
 ## 14.2 Workflow des validations sensibles
 

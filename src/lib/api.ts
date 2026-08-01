@@ -4,6 +4,7 @@ import { auth } from "@/lib/auth";
 import { peut, type Action, type Ressource } from "@/lib/permissions";
 import { ErreurPaiement } from "@/lib/paiements";
 import { ErreurDocument } from "@/lib/documents";
+import { ErreurImport } from "@/lib/import/executer";
 
 export class ApiError extends Error {
   status: number;
@@ -45,6 +46,9 @@ export function handleApiError(erreur: unknown) {
     return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status });
   }
   if (erreur instanceof ErreurDocument) {
+    return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status: 400 });
+  }
+  if (erreur instanceof ErreurImport) {
     return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status: 400 });
   }
   console.error(erreur);

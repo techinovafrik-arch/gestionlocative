@@ -32,4 +32,12 @@ describe("permissions", () => {
     expect(peut("gerant", "utilisateurs", "creer")).toBe(false);
     expect(peut("gestionnaire", "utilisateurs", "creer")).toBe(false);
   });
+
+  it("réserve l'import de données à l'administrateur (D-041)", () => {
+    expect(peut("administrateur", "import", "creer")).toBe(true);
+    expect(peut("administrateur", "import", "lire")).toBe(true);
+    expect(peut("gerant", "import", "creer")).toBe(false);
+    expect(peut("gestionnaire", "import", "creer")).toBe(false);
+    expect(peut("consultation", "import", "lire")).toBe(false);
+  });
 });

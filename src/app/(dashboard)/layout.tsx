@@ -16,6 +16,8 @@ const LIENS = [
   { href: "/documents", label: "Documents", ressource: "documents" as const },
   { href: "/rapports", label: "Rapports", ressource: "rapports" as const },
   { href: "/utilisateurs", label: "Utilisateurs", ressource: "utilisateurs" as const },
+  { href: "/audit", label: "Journal d'audit", ressource: "audit" as const },
+  { href: "/import", label: "Import de données", ressource: "import" as const },
 ];
 
 export default async function DashboardLayout({

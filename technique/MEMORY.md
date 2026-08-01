@@ -92,6 +92,39 @@ DATABASE_URL="postgresql://gestionlocative:gestionlocative_dev@localhost:5432/ge
 La CI applique automatiquement les migrations sur sa propre base éphémère
 (`.github/workflows/ci.yml`), pas besoin d'y penser côté CI.
 
+## Générateurs de code (`src/lib/codes.ts`) et transactions interactives
+
+Ces générateurs (`genererCodeBien`, etc.) interrogent le client Prisma
+**global**, jamais un client `tx`. Dans une transaction interactive
+(`prisma.$transaction(async (tx) => ...)`) qui crée plusieurs lignes de la
+même table en boucle, les appeler ferait courir le risque de générer deux
+fois le même code (le `count()` du générateur ne voit pas les lignes déjà
+créées dans la transaction en cours, non commitée). Solution appliquée dans
+`src/lib/import/executer.ts` : un compteur local à la transaction, initialisé
+une fois par `tx.xxx.count()` puis incrémenté en mémoire à chaque ligne. Ne
+pas réutiliser `codes.ts` tel quel dans un futur traitement en lot.
+
+## Audit : toujours après le commit, jamais dans une transaction
+
+Convention déjà en place avant le Sprint 8 (`/api/contrats/[id]/valider`) et
+reconduite depuis : `enregistrerAudit()` s'appelle **après** que la
+transaction métier a commité, avec le client Prisma global — jamais avec un
+client `tx` à l'intérieur du callback de `$transaction`. Une transaction
+longue (import en lot, ex. `executerImport`) collecte donc les entités créées
+dans des tableaux, puis boucle sur `enregistrerAudit()` une fois la
+transaction terminée.
+
+## Dates saisies dans un classeur Excel : `z.coerce.date()` ne suffit pas
+
+Une cellule Excel arrive soit en `Date` (cellule formatée date), soit en
+texte `JJ/MM/AAAA` (format demandé aux utilisateurs, cf. modèle d'import).
+`new Date("15/03/1985")` (ce que fait `z.coerce.date()`) donne `Invalid
+Date` — JS attend `MM/DD/YYYY` ou de l'ISO. Solution dans
+`src/lib/import/schemas.ts` (`versDateOuBrut` + `dateExcel(...)`) : un
+`z.preprocess` qui reconnaît explicitement `JJ/MM/AAAA` avant de retomber sur
+`Date`/ISO. À réutiliser pour tout futur champ date alimenté depuis un
+fichier Excel (ne pas revenir à `z.coerce.date()` nu sur ce genre d'entrée).
+
 ## Vérification manuelle systématique
 
 Chaque sprint a été vérifié par un test HTTP réel (login via

@@ -23,7 +23,8 @@ export type Ressource =
   | "rapports"
   | "tableauDeBord"
   | "utilisateurs"
-  | "audit";
+  | "audit"
+  | "import";
 
 export type Action = "creer" | "lire" | "modifier" | "supprimer" | "valider";
 
@@ -115,6 +116,13 @@ const MATRICE: Record<Ressource, Partial<Record<ProfilUtilisateur, Action[]>>> =
   audit: {
     administrateur: ["lire"],
     gerant: ["lire"],
+  },
+  // Reprise de données (D-011, EF-32) : opération sensible de démarrage,
+  // non couverte par la matrice 14.1 (absente du dossier) — restreinte à
+  // l'Administrateur par cohérence avec "Utilisateurs — gérer" (même niveau
+  // de sensibilité : action irréversible en masse sur les données).
+  import: {
+    administrateur: ["creer", "lire"],
   },
 };
 

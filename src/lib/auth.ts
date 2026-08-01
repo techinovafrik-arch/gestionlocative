@@ -4,7 +4,11 @@ import bcrypt from "bcryptjs";
 import { prisma } from "@/lib/prisma";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
-  session: { strategy: "jwt" },
+  // ENF-04, D-038 : déconnexion automatique après 30 minutes d'inactivité.
+  // maxAge fixe la durée de vie du jeton depuis la dernière activité ;
+  // updateAge (plus court) fait glisser cette expiration à chaque requête
+  // authentifiée passant par proxy.ts, tant que l'utilisateur reste actif.
+  session: { strategy: "jwt", maxAge: 30 * 60, updateAge: 5 * 60 },
   pages: {
     signIn: "/connexion",
   },
