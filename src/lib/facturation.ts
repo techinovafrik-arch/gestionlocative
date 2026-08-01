@@ -1,6 +1,7 @@
 import { prisma } from "@/lib/prisma";
 import type { Contrat } from "@/generated/prisma";
 import { genererNumeroFacture } from "@/lib/codes";
+import { notifierStaff } from "@/lib/notifications/interne";
 
 // RG-F05 : échéance avant le 10 du mois facturé.
 const JOUR_ECHEANCE = 10;
@@ -41,11 +42,26 @@ async function calculerArrieres(contratId: string): Promise<number> {
 }
 
 // P4 (section 08) : une facture émise, non réglée, dont l'échéance est
-// dépassée, passe en statut "impayée" (base des futures alertes — Sprint 6).
+// dépassée, passe en statut "impayée". RG-N04 : le gestionnaire et le gérant
+// en sont notifiés en interne (la relance externe au locataire est gérée par
+// lib/relances.ts, sur un cycle distinct).
 async function marquerFacturesEnRetard(maintenant: Date) {
-  await prisma.facture.updateMany({
+  const facturesEnRetard = await prisma.facture.findMany({
     where: { statut: "emise", montantPaye: 0, dateEcheance: { lt: maintenant } },
+    select: { id: true, numero: true },
+  });
+  if (facturesEnRetard.length === 0) return;
+
+  await prisma.facture.updateMany({
+    where: { id: { in: facturesEnRetard.map((f) => f.id) } },
     data: { statut: "impayee" },
+  });
+
+  await notifierStaff({
+    profils: ["gestionnaire", "gerant"],
+    type: "alerte",
+    titre: `${facturesEnRetard.length} facture(s) en retard de paiement`,
+    message: `Factures concernées : ${facturesEnRetard.map((f) => f.numero).join(", ")}.`,
   });
 }
 
@@ -136,6 +152,16 @@ export async function genererFacturesDuCycle(maintenant = new Date()) {
         ? await genererFactureMensuelle(contrat, maintenant)
         : await genererFactureGlobale(contrat, maintenant);
     if (facture) facturesGenerees.push(facture);
+  }
+
+  // RG-N02, RG-N03 : notification interne du staff après génération.
+  if (facturesGenerees.length > 0) {
+    await notifierStaff({
+      profils: ["administrateur", "gerant", "gestionnaire"],
+      type: "information",
+      titre: `${facturesGenerees.length} facture(s) générée(s)`,
+      message: `Factures : ${facturesGenerees.map((f) => f.numero).join(", ")}.`,
+    });
   }
 
   return facturesGenerees;

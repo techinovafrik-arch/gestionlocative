@@ -3,6 +3,7 @@ import { prisma } from "@/lib/prisma";
 import { ApiError, handleApiError, requirePermission } from "@/lib/api";
 import { enregistrerAudit } from "@/lib/audit";
 import { genererNumeroContrat } from "@/lib/codes";
+import { notifierStaff } from "@/lib/notifications/interne";
 import { contratCreationSchema } from "@/lib/validations/contrat";
 
 const INCLUSION = { bien: true, locataire: true, caution: true } as const;
@@ -75,6 +76,14 @@ export async function POST(request: NextRequest) {
       entiteType: "contrat",
       entiteId: contrat.id,
       nouvelleValeur: contrat,
+    });
+
+    // RG-N01, RG-N02 : le gérant doit être notifié des contrats en attente de validation.
+    await notifierStaff({
+      profils: ["gerant"],
+      type: "action_requise",
+      titre: `Contrat ${contrat.numero} en attente de validation`,
+      message: `Le contrat ${contrat.numero} (${contrat.bien.designation}) a été créé et attend votre validation.`,
     });
 
     return NextResponse.json({ contrat }, { status: 201 });

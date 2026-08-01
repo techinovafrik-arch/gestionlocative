@@ -152,7 +152,11 @@
 | solde_restant | NUMERIC(12,0) | NOT NULL |
 | statut | VARCHAR(20) | NOT NULL DEFAULT 'emise', CHECK ∈ {emise, partiellement_payee, payee, impayee} |
 | date_echeance | DATE | NOT NULL |
+| alerte_echeance_envoyee | BOOLEAN | NOT NULL DEFAULT false |
+| relance_impaye_envoyee | BOOLEAN | NOT NULL DEFAULT false |
 | created_at / updated_at | TIMESTAMPTZ | NOT NULL |
+
+*Note : les colonnes `alerte_echeance_envoyee` et `relance_impaye_envoyee` ont été ajoutées au Sprint 6 pour garantir l'idempotence des relances locataire (RG-N04, D-026, D-027) — éviter qu'un cycle de relance rejoué renvoie plusieurs fois la même alerte. Champs techniques, non issus du CDC/dossier initial, sans impact sur une règle métier existante.*
 
 ### `paiements`
 | Colonne | Type | Contrainte |
@@ -370,6 +374,8 @@ CREATE TABLE factures (
     solde_restant NUMERIC(12,0) NOT NULL,
     statut VARCHAR(20) NOT NULL DEFAULT 'emise' CHECK (statut IN ('emise','partiellement_payee','payee','impayee')),
     date_echeance DATE NOT NULL,
+    alerte_echeance_envoyee BOOLEAN NOT NULL DEFAULT false,
+    relance_impaye_envoyee BOOLEAN NOT NULL DEFAULT false,
     created_at TIMESTAMPTZ NOT NULL DEFAULT now(),
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );

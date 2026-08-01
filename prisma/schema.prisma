@@ -328,6 +328,12 @@ model Facture {
   dateEcheance   DateTime      @map("date_echeance") @db.Date
   paiements      Paiement[]
 
+  // Indicateurs d'idempotence des relances locataire (RG-N04, D-026, D-027) :
+  // évitent de renvoyer plusieurs fois la même alerte à chaque exécution du
+  // cycle de relances. Ajoutés au Sprint 6, non issus du CDC/dossier initial.
+  alerteEcheanceEnvoyee Boolean @default(false) @map("alerte_echeance_envoyee")
+  relanceImpayeEnvoyee  Boolean @default(false) @map("relance_impaye_envoyee")
+
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
 

@@ -143,6 +143,8 @@ Consolidation champ par champ du MLD (section 10), avec source CDC ou décision 
 | solde_restant | NUMERIC(12,0) | Oui | — | FCFA | CDC §8.3 |
 | statut | VARCHAR(20) | Oui | emise | Liste de valeurs §11.14 | CDC §8.3, §9.2 |
 | date_echeance | DATE | Oui | — | Avant le 10 du mois | CDC §17.5, D-020 (RG-F05) |
+| alerte_echeance_envoyee | BOOLEAN | Oui | false | Idempotence de l'alerte échéance | Sprint 6, D-026/D-027 (RG-N04) |
+| relance_impaye_envoyee | BOOLEAN | Oui | false | Idempotence de la relance impayé | Sprint 6, D-026/D-027 (RG-N04) |
 
 ## 11.11 `paiements`
 
