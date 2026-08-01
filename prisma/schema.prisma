@@ -264,7 +264,7 @@ model Contrat {
 
   // Un seul contrat actif par bien : appliqué via index partiel PostgreSQL
   // (migration manuelle, non exprimable nativement en schema.prisma) —
-  // voir dossier/10-mld.md §10.3, migration 0002_contrat_actif_unique.sql
+  // voir dossier/10-mld.md §10.3, migration 20260801093500_contrat_actif_unique
   @@map("contrats")
 }
 

@@ -27,6 +27,7 @@ jobs:
 
     env:
       DATABASE_URL: postgresql://gestionlocative:gestionlocative@localhost:5432/gestionlocative_test
+      DATABASE_URL_TEST: postgresql://gestionlocative:gestionlocative@localhost:5432/gestionlocative_test
       NEXTAUTH_SECRET: ci-secret-not-used-in-production
       NEXTAUTH_URL: http://localhost:3000
 
@@ -44,8 +45,8 @@ jobs:
       - name: Générer le client Prisma
         run: npx prisma generate
 
-      - name: Appliquer le schéma sur la base de test
-        run: npx prisma db push --accept-data-loss
+      - name: Appliquer les migrations sur la base de test
+        run: npx prisma migrate deploy
 
       - name: Lint
         run: npm run lint
@@ -53,8 +54,11 @@ jobs:
       - name: Vérification des types
         run: npm run typecheck
 
-      - name: Tests
+      - name: Tests unitaires
         run: npm test
+
+      - name: Tests d'intégration
+        run: npm run test:integration
 
       - name: Build
         run: npm run build
