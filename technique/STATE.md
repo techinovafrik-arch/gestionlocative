@@ -5,7 +5,7 @@
 
 ## Sprint courant
 
-**Sprint 7 — Rapports et tableau de bord** : à démarrer.
+**Sprint 8 — Import Excel initial, durcissement sécurité** : à démarrer.
 
 ## Suivi des sprints
 
@@ -18,13 +18,31 @@
 | 4 | Paiements, imputation, correction, quittances | ✅ Fait |
 | 5 | Gestion documentaire, suivi des cautions | ✅ Fait |
 | 6 | Notifications multi-canal (architecture posée, fournisseurs en stub) | ✅ Fait |
-| 7 | Rapports et tableau de bord | ⏳ À faire |
+| 7 | Rapports et tableau de bord | ✅ Fait |
 | 8 | Import Excel initial, durcissement sécurité | ⏳ À faire |
 | 9 | Recette, corrections, mise en production | ⏳ À faire |
 
 Détail des exigences couvertes : voir `dossier/15-cdcf.md` (EF-01 à EF-32,
-ENF-01 à ENF-09). Tous les EF **Must** de la facturation/paiements/contrats/
-biens/locataires/utilisateurs/documents/notifications sont implémentés.
+ENF-01 à ENF-09). Tous les EF **Must** sont implémentés.
+
+### Sprint 7 — précisions
+
+- Tableau de bord (`/`) : indicateurs immobiliers/financiers/locatifs (CDC
+  §16.2) + 4 graphiques (CDC §16.9) via Recharts, palette validée par le
+  skill dataviz (cohérente avec la charte bleu/orange D-032).
+- 16 rapports de la section 13.4 couverts (`src/lib/rapports/*.ts`),
+  regroupés en 4 écrans thématiques (`/rapports/immobilier`,
+  `/rapports/locataires-contrats`, `/rapports/financier`, `/rapports/synthese`)
+  + `/cautions` existant. Export Excel natif (exceljs) pour chacun via
+  `/api/rapports/excel?type=...`.
+- **Simplification assumée** : l'export PDF s'appuie sur l'impression
+  navigateur (mise en page tabulaire déjà « imprimable directement » au sens
+  RG-X02) plutôt que 16 gabarits PDF dédiés comme pour contrat/facture/
+  quittance — ceux-là restent des documents PDF générés (react-pdf).
+- **Permissions simplifiées** : tous les rapports sont gérés par une seule
+  ressource `rapports` (lecture ouverte aux 4 profils) plutôt que la
+  restriction fine par rapport listée en section 13.4 (certains rapports y
+  excluent Gestionnaire ou Consultation). À durcir si un besoin réel émerge.
 
 ## Environnement de développement local
 
@@ -57,5 +75,6 @@ Toujours « à trancher plus tard » — sans impact sur le code déjà écrit
 
 ## Prochaine action
 
-Sprint 7 : tableau de bord (indicateurs CDC §16.2) et rapports (§16.3 à
-§16.8) — écrans de consultation, filtres, exports PDF/Excel (RG-X02).
+Sprint 8 : import initial des données existantes via Excel (D-011),
+durcissement sécurité (ENF-04, ENF-05 — session, sauvegardes), finalisation
+du journal d'audit (déjà largement fonctionnel depuis les sprints précédents).

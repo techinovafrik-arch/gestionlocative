@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { peut } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { BoutonExportExcel } from "@/components/rapports/bouton-export-excel";
 
 const LIBELLES_STATUT: Record<string, string> = {
   detenue: "Détenue",
@@ -33,7 +34,10 @@ export default async function PageCautions() {
 
   return (
     <div>
-      <h1 className="mb-2 text-xl font-semibold text-slate-900">Cautions ({cautions.length})</h1>
+      <div className="mb-2 flex items-center justify-between">
+        <h1 className="text-xl font-semibold text-slate-900">Cautions ({cautions.length})</h1>
+        <BoutonExportExcel type="cautions" />
+      </div>
       <p className="mb-6 text-sm text-slate-600">
         Détenues : {detenues} · Remboursées : {remboursees} · Remboursées avec retenue : {avecRetenue}
       </p>
