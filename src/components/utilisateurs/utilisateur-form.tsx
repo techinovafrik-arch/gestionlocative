@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROFILS_UTILISATEUR } from "@/lib/validations/utilisateur";
+import { ChampMotDePasse } from "@/components/ui/champ-mot-de-passe";
 
 const LIBELLES_PROFIL: Record<(typeof PROFILS_UTILISATEUR)[number], string> = {
   administrateur: "Administrateur",
@@ -86,9 +87,8 @@ export function FormulaireUtilisateur() {
 
       <div>
         <label className="block text-sm font-medium text-slate-700">Mot de passe initial</label>
-        <input
+        <ChampMotDePasse
           name="motDePasse"
-          type="password"
           required
           minLength={8}
           className="mt-1 w-full rounded-md border border-slate-300 px-3 py-2 text-sm"

@@ -3,6 +3,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { peut } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { ReinitialiserMotDePasse } from "@/components/utilisateurs/reinitialiser-mot-de-passe";
 
 export default async function PageUtilisateurs() {
   const session = await auth();
@@ -36,6 +37,7 @@ export default async function PageUtilisateurs() {
               <th className="px-4 py-3">Email</th>
               <th className="px-4 py-3">Profil</th>
               <th className="px-4 py-3">Statut</th>
+              <th className="px-4 py-3">Actions</th>
             </tr>
           </thead>
           <tbody>
@@ -54,6 +56,9 @@ export default async function PageUtilisateurs() {
                   >
                     {utilisateur.actif ? "Actif" : "Désactivé"}
                   </span>
+                </td>
+                <td className="px-4 py-3">
+                  <ReinitialiserMotDePasse utilisateurId={utilisateur.id} />
                 </td>
               </tr>
             ))}

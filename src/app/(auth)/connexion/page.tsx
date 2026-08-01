@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { signIn } from "next-auth/react";
 import { useRouter } from "next/navigation";
+import { ChampMotDePasse } from "@/components/ui/champ-mot-de-passe";
 
 export default function PageConnexion() {
   const router = useRouter();
@@ -10,6 +11,7 @@ export default function PageConnexion() {
   const [motDePasse, setMotDePasse] = useState("");
   const [erreur, setErreur] = useState<string | null>(null);
   const [enCours, setEnCours] = useState(false);
+  const [afficherAide, setAfficherAide] = useState(false);
 
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -60,9 +62,8 @@ export default function PageConnexion() {
           <label className="block text-sm font-medium text-slate-700" htmlFor="password">
             Mot de passe
           </label>
-          <input
+          <ChampMotDePasse
             id="password"
-            type="password"
             required
             value={motDePasse}
             onChange={(e) => setMotDePasse(e.target.value)}
@@ -79,6 +80,21 @@ export default function PageConnexion() {
         >
           {enCours ? "Connexion..." : "Se connecter"}
         </button>
+
+        <button
+          type="button"
+          onClick={() => setAfficherAide((v) => !v)}
+          className="w-full text-center text-sm text-blue-700 hover:underline"
+        >
+          Mot de passe oublié ?
+        </button>
+
+        {afficherAide && (
+          <p className="rounded-md bg-slate-50 p-3 text-sm text-slate-600">
+            Contactez votre Administrateur : il peut réinitialiser votre mot
+            de passe depuis la rubrique Utilisateurs.
+          </p>
+        )}
       </form>
     </div>
   );
