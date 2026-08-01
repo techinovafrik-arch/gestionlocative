@@ -11,6 +11,8 @@ const LIENS = [
   { href: "/contrats", label: "Contrats", ressource: "contrats" as const },
   { href: "/factures", label: "Factures", ressource: "factures" as const },
   { href: "/paiements", label: "Paiements", ressource: "paiements" as const },
+  { href: "/cautions", label: "Cautions", ressource: "cautions" as const },
+  { href: "/documents", label: "Documents", ressource: "documents" as const },
   { href: "/utilisateurs", label: "Utilisateurs", ressource: "utilisateurs" as const },
 ];
 

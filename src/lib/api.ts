@@ -3,6 +3,7 @@ import { ZodError } from "zod";
 import { auth } from "@/lib/auth";
 import { peut, type Action, type Ressource } from "@/lib/permissions";
 import { ErreurPaiement } from "@/lib/paiements";
+import { ErreurDocument } from "@/lib/documents";
 
 export class ApiError extends Error {
   status: number;
@@ -42,6 +43,9 @@ export function handleApiError(erreur: unknown) {
   if (erreur instanceof ErreurPaiement) {
     const status = erreur.code === "PAIEMENT_INTROUVABLE" ? 404 : 400;
     return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status });
+  }
+  if (erreur instanceof ErreurDocument) {
+    return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status: 400 });
   }
   console.error(erreur);
   return NextResponse.json({ erreur: "Erreur interne." }, { status: 500 });
