@@ -37,6 +37,13 @@ describe("permissions", () => {
     expect(peut("gestionnaire", "contrats", "lire")).toBe(true);
   });
 
+  it("autorise l'administrateur et le gestionnaire à générer une facture manuellement (D-042)", () => {
+    expect(peut("administrateur", "factures", "creer")).toBe(true);
+    expect(peut("gestionnaire", "factures", "creer")).toBe(true);
+    expect(peut("gerant", "factures", "creer")).toBe(false);
+    expect(peut("consultation", "factures", "creer")).toBe(false);
+  });
+
   it("réserve l'import de données à l'administrateur (D-041)", () => {
     expect(peut("administrateur", "import", "creer")).toBe(true);
     expect(peut("administrateur", "import", "lire")).toBe(true);

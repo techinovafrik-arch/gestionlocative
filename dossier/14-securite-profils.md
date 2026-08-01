@@ -19,6 +19,7 @@ Légende : **C** Création, **L** Lecture, **M** Modification, **S** Suppression
 | Révision de loyer — proposer | — | C | C | — |
 | Révision de loyer — valider | — | **V** | — | — |
 | Factures — consulter/télécharger/envoyer | L | L | L | L |
+| Factures — générer manuellement (un contrat, hors cycle du 25) | C | — | C | — |
 | Paiements — enregistrer | — | — | C | — |
 | Paiements — corriger | — | **V** | — | — |
 | Paiements — consulter | L | L | L | L |
@@ -33,6 +34,13 @@ Légende : **C** Création, **L** Lecture, **M** Modification, **S** Suppression
 | Utilisateurs — gérer | C M S | — | — | — |
 | Journal d'audit — consulter | L | L | — | — |
 | Import de données (reprise initiale) — exécuter | C L | — | — | — |
+
+**Ligne ajoutée hors sprint planifié (D-042)** : génération manuelle d'une
+facture pour un contrat précis, en réutilisant exactement le moteur de
+génération automatique (RG-F01, RG-F05, RG-F06, RG-F08) — utile pour
+rattraper un contrat oublié par le cycle du 25 ou facturer immédiatement un
+nouveau contrat, sans jamais permettre une saisie libre de montant/période.
+Ouverte à l'Administrateur et au Gestionnaire locatif.
 
 **Ligne ajoutée au Sprint 8 (D-041)** : la reprise de données via import Excel
 (EF-32, D-011) n'était pas couverte par la matrice initiale. Réservée à

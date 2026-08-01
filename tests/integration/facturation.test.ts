@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { randomUUID } from "node:crypto";
 import { prisma } from "@/lib/prisma";
-import { genererFacturesDuCycle } from "@/lib/facturation";
+import { genererFacturesDuCycle, genererFacturePourContrat, ErreurFacturation } from "@/lib/facturation";
 import { nettoyerBase } from "./setup";
 
 function identifiantCourt() {
@@ -151,5 +151,55 @@ describe("facturation", () => {
 
     const factures = await genererFacturesDuCycle(new Date("2026-08-25"));
     expect(factures).toHaveLength(0);
+  });
+});
+
+describe("génération manuelle ciblée sur un contrat (D-042)", () => {
+  it("génère une facture pour le contrat désigné, mêmes règles que le cycle automatique", async () => {
+    const contrat = await creerContratActif({
+      periodicite: "mensuelle",
+      montantLoyer: 150000,
+      charges: 10000,
+      dateDebut: new Date("2026-08-10"),
+    });
+
+    const facture = await genererFacturePourContrat(contrat.id, new Date("2026-08-25"));
+
+    expect(facture.periode).toBe("2026-09");
+    expect(facture.totalAPayer.toString()).toBe("160000");
+    expect(facture.dateEcheance.toISOString().slice(0, 10)).toBe("2026-09-10");
+  });
+
+  it("refuse un contrat introuvable", async () => {
+    await expect(
+      genererFacturePourContrat(randomUUID(), new Date("2026-08-25")),
+    ).rejects.toMatchObject({ code: "CONTRAT_INTROUVABLE" } satisfies Partial<ErreurFacturation>);
+  });
+
+  it("refuse un contrat non actif", async () => {
+    const contrat = await creerContratActif({
+      periodicite: "mensuelle",
+      montantLoyer: 150000,
+      dateDebut: new Date("2026-08-01"),
+    });
+    await prisma.contrat.update({ where: { id: contrat.id }, data: { statut: "brouillon" } });
+
+    await expect(
+      genererFacturePourContrat(contrat.id, new Date("2026-08-25")),
+    ).rejects.toMatchObject({ code: "CONTRAT_NON_ACTIF" } satisfies Partial<ErreurFacturation>);
+  });
+
+  it("refuse de générer deux fois pour la même période", async () => {
+    const contrat = await creerContratActif({
+      periodicite: "mensuelle",
+      montantLoyer: 150000,
+      dateDebut: new Date("2026-08-01"),
+    });
+
+    await genererFacturePourContrat(contrat.id, new Date("2026-08-25"));
+
+    await expect(
+      genererFacturePourContrat(contrat.id, new Date("2026-08-25")),
+    ).rejects.toMatchObject({ code: "DEJA_GENEREE" } satisfies Partial<ErreurFacturation>);
   });
 });

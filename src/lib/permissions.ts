@@ -66,9 +66,11 @@ const MATRICE: Record<Ressource, Partial<Record<ProfilUtilisateur, Action[]>>> =
     gerant: ["valider"],
   },
   factures: {
-    administrateur: ["lire"],
+    // "creer" = génération manuelle ciblée sur un contrat (D-042) ; la
+    // génération de masse automatique (RG-F01) reste réservée au cron.
+    administrateur: ["lire", "creer"],
     gerant: ["lire"],
-    gestionnaire: ["lire"],
+    gestionnaire: ["lire", "creer"],
     consultation: ["lire"],
   },
   paiements: {

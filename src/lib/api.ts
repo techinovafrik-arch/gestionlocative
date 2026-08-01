@@ -5,6 +5,7 @@ import { peut, type Action, type Ressource } from "@/lib/permissions";
 import { ErreurPaiement } from "@/lib/paiements";
 import { ErreurDocument } from "@/lib/documents";
 import { ErreurImport } from "@/lib/import/executer";
+import { ErreurFacturation } from "@/lib/facturation";
 
 export class ApiError extends Error {
   status: number;
@@ -50,6 +51,10 @@ export function handleApiError(erreur: unknown) {
   }
   if (erreur instanceof ErreurImport) {
     return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status: 400 });
+  }
+  if (erreur instanceof ErreurFacturation) {
+    const status = erreur.code === "CONTRAT_INTROUVABLE" ? 404 : 409;
+    return NextResponse.json({ erreur: erreur.message, code: erreur.code }, { status });
   }
   console.error(erreur);
   return NextResponse.json({ erreur: "Erreur interne." }, { status: 500 });

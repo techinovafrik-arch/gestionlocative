@@ -2,6 +2,7 @@ import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
 import { peut } from "@/lib/permissions";
 import { prisma } from "@/lib/prisma";
+import { GenererFacture } from "@/components/factures/generer-facture";
 
 const LIBELLES_STATUT: Record<string, string> = {
   emise: "Émise",
@@ -27,9 +28,32 @@ export default async function PageFactures() {
     orderBy: { dateEmission: "desc" },
   });
 
+  const peutGenerer = peut(session.user.profil, "factures", "creer");
+  const contratsActifs = peutGenerer
+    ? await prisma.contrat.findMany({
+        where: { statut: "actif" },
+        include: { bien: true, locataire: true },
+        orderBy: { numero: "asc" },
+      })
+    : [];
+
   return (
     <div>
       <h1 className="mb-6 text-xl font-semibold text-slate-900">Factures ({factures.length})</h1>
+
+      {peutGenerer && (
+        <GenererFacture
+          contrats={contratsActifs.map((c) => ({
+            id: c.id,
+            numero: c.numero,
+            bien: c.bien.code,
+            locataire:
+              c.locataire.type === "physique"
+                ? `${c.locataire.nom ?? ""} ${c.locataire.prenoms ?? ""}`
+                : (c.locataire.raisonSociale ?? ""),
+          }))}
+        />
+      )}
 
       <div className="overflow-hidden rounded-lg border border-slate-200 bg-white">
         <table className="w-full text-left text-sm">

@@ -3,6 +3,14 @@ import type { Contrat } from "@/generated/prisma";
 import { genererNumeroFacture } from "@/lib/codes";
 import { notifierStaff } from "@/lib/notifications/interne";
 
+export class ErreurFacturation extends Error {
+  code: "CONTRAT_INTROUVABLE" | "CONTRAT_NON_ACTIF" | "DEJA_GENEREE";
+  constructor(code: ErreurFacturation["code"], message: string) {
+    super(message);
+    this.code = code;
+  }
+}
+
 // RG-F05 : échéance avant le 10 du mois facturé.
 const JOUR_ECHEANCE = 10;
 
@@ -165,4 +173,43 @@ export async function genererFacturesDuCycle(maintenant = new Date()) {
   }
 
   return facturesGenerees;
+}
+
+// D-042 : génération manuelle ciblée sur un seul contrat (Administrateur,
+// Gestionnaire locatif), hors cycle du 25 — ex. contrat oublié par le cycle
+// automatique, ou nouveau contrat à facturer immédiatement. Réutilise
+// exactement les mêmes règles que le cycle automatique (RG-F01, RG-F05,
+// RG-F06, RG-F08) : aucune saisie libre de montant ou de période.
+export async function genererFacturePourContrat(contratId: string, maintenant = new Date()) {
+  const contrat = await prisma.contrat.findUnique({ where: { id: contratId } });
+  if (!contrat) {
+    throw new ErreurFacturation("CONTRAT_INTROUVABLE", "Contrat introuvable.");
+  }
+  if (contrat.statut !== "actif") {
+    throw new ErreurFacturation(
+      "CONTRAT_NON_ACTIF",
+      "Seul un contrat actif peut être facturé.",
+    );
+  }
+
+  const facture =
+    contrat.periodicite === "mensuelle"
+      ? await genererFactureMensuelle(contrat, maintenant)
+      : await genererFactureGlobale(contrat, maintenant);
+
+  if (!facture) {
+    throw new ErreurFacturation(
+      "DEJA_GENEREE",
+      "Une facture existe déjà pour la période en cours de ce contrat.",
+    );
+  }
+
+  await notifierStaff({
+    profils: ["administrateur", "gerant", "gestionnaire"],
+    type: "information",
+    titre: `Facture ${facture.numero} générée manuellement`,
+    message: `Facture ${facture.numero} générée pour le contrat ${contrat.numero}.`,
+  });
+
+  return facture;
 }
