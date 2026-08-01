@@ -1,0 +1,431 @@
+// Schéma dérivé de dossier/10-mld.md (validé). Toute modification de règle
+// métier doit d'abord être actée dans le dossier de conception, pas ici.
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+// --- Enumérations (dossier/11-dictionnaire-donnees.md §11.16) ---
+
+enum TypeBien {
+  maison
+  villa
+  appartement
+  studio
+  chambre
+  bureau
+  magasin
+  entrepot
+  terrain
+  immeuble
+  local_commercial
+}
+
+enum StatutBien {
+  libre
+  occupe
+  en_travaux
+}
+
+enum TypeLocataire {
+  physique
+  entreprise
+}
+
+enum StatutLocataire {
+  actif
+  archive
+}
+
+enum TypePieceIdentite {
+  passeport
+  cni
+  carte_consulaire
+  permis
+}
+
+enum Periodicite {
+  mensuelle
+  trimestrielle
+  annuelle
+}
+
+enum StatutContrat {
+  brouillon
+  actif
+  resilie
+  termine
+}
+
+enum StatutCaution {
+  detenue
+  remboursee
+  remboursee_avec_retenue
+}
+
+enum StatutFacture {
+  emise
+  partiellement_payee
+  payee
+  impayee
+}
+
+enum ModePaiement {
+  especes
+  virement
+  cheque
+  orange_money
+  mtn_money
+  moov_money
+  wave
+}
+
+enum StatutPaiement {
+  valide
+  corrige
+  annule
+}
+
+enum EntiteDocument {
+  bien
+  locataire
+  contrat
+  facture
+}
+
+enum ProfilUtilisateur {
+  administrateur
+  gerant
+  gestionnaire
+  consultation
+}
+
+enum TypeNotification {
+  information
+  alerte
+  action_requise
+}
+
+enum CanalNotification {
+  interne
+  email
+  sms
+  whatsapp
+}
+
+// --- Tables de référence (D-029) ---
+
+model Commune {
+  id        String     @id @default(uuid()) @db.Uuid
+  nom       String     @unique @db.VarChar(100)
+  quartiers Quartier[]
+  createdAt DateTime   @default(now()) @map("created_at")
+  updatedAt DateTime   @updatedAt @map("updated_at")
+
+  @@map("communes")
+}
+
+model Quartier {
+  id        String   @id @default(uuid()) @db.Uuid
+  communeId String   @map("commune_id") @db.Uuid
+  commune   Commune  @relation(fields: [communeId], references: [id])
+  nom       String   @db.VarChar(100)
+  biens     Bien[]
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([communeId, nom])
+  @@map("quartiers")
+}
+
+// --- Biens (RG-B01 à RG-B07) ---
+
+model Bien {
+  id                 String     @id @default(uuid()) @db.Uuid
+  code               String     @unique @db.VarChar(30)
+  type               TypeBien
+  designation        String     @db.VarChar(150)
+  description        String?
+  quartierId         String     @map("quartier_id") @db.Uuid
+  quartier           Quartier   @relation(fields: [quartierId], references: [id])
+  adresse            String     @db.VarChar(255)
+  loyer              Decimal    @db.Decimal(12, 0)
+  chargesMensuelles  Decimal    @default(0) @map("charges_mensuelles") @db.Decimal(12, 0)
+  statut             StatutBien @default(libre)
+  contrats           Contrat[]
+  createdAt          DateTime   @default(now()) @map("created_at")
+  updatedAt          DateTime   @updatedAt @map("updated_at")
+
+  @@map("biens")
+}
+
+// --- Locataires (RG-L01 à RG-L05) ---
+
+model Locataire {
+  id                    String            @id @default(uuid()) @db.Uuid
+  code                  String            @unique @db.VarChar(30)
+  type                  TypeLocataire
+  civilite              String?           @db.VarChar(10)
+  nom                   String?           @db.VarChar(100)
+  prenoms               String?           @db.VarChar(150)
+  dateNaissance         DateTime?         @map("date_naissance") @db.Date
+  nationalite           String?           @db.VarChar(60)
+  profession            String?           @db.VarChar(100)
+  raisonSociale         String?           @map("raison_sociale") @db.VarChar(150)
+  infosAdministratives  String?           @map("infos_administratives")
+  representant          String?           @db.VarChar(150)
+  telephonePrincipal    String            @map("telephone_principal") @db.VarChar(20)
+  telephoneSecondaire   String?           @map("telephone_secondaire") @db.VarChar(20)
+  email                 String?           @db.VarChar(150)
+  contactUrgence        String?           @map("contact_urgence") @db.VarChar(150)
+  statut                StatutLocataire   @default(actif)
+  dateArchivage         DateTime?         @map("date_archivage") @db.Date
+  piecesIdentite        PieceIdentite[]
+  contrats              Contrat[]
+  createdAt             DateTime          @default(now()) @map("created_at")
+  updatedAt             DateTime          @updatedAt @map("updated_at")
+
+  @@map("locataires")
+}
+
+model PieceIdentite {
+  id              String            @id @default(uuid()) @db.Uuid
+  locataireId     String            @map("locataire_id") @db.Uuid
+  locataire       Locataire         @relation(fields: [locataireId], references: [id])
+  type            TypePieceIdentite
+  numero          String            @db.VarChar(50)
+  dateExpiration  DateTime?         @map("date_expiration") @db.Date
+  createdAt       DateTime          @default(now()) @map("created_at")
+  updatedAt       DateTime          @updatedAt @map("updated_at")
+
+  @@map("pieces_identite")
+}
+
+// --- Utilisateurs (RG-U01, D-014) ---
+
+model Utilisateur {
+  id               String            @id @default(uuid()) @db.Uuid
+  nom              String            @db.VarChar(150)
+  email            String            @unique @db.VarChar(150)
+  motDePasseHash   String            @map("mot_de_passe_hash") @db.VarChar(255)
+  profil           ProfilUtilisateur
+  actif            Boolean           @default(true)
+
+  contratsValides       Contrat[]        @relation("ContratValidePar")
+  revisionsDemandees    RevisionLoyer[]  @relation("RevisionDemandePar")
+  revisionsValidees     RevisionLoyer[]  @relation("RevisionValidePar")
+  cautionsValidees      Caution[]        @relation("CautionValidePar")
+  paiementsEncaisses    Paiement[]       @relation("PaiementEncaissePar")
+  documentsAjoutes      Document[]       @relation("DocumentAjoutePar")
+  notifications         Notification[]
+  audits                Audit[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("utilisateurs")
+}
+
+// --- Contrats (RG-C01 à RG-C07) ---
+
+model Contrat {
+  id               String         @id @default(uuid()) @db.Uuid
+  numero           String         @unique @db.VarChar(30)
+  bienId           String         @map("bien_id") @db.Uuid
+  bien             Bien           @relation(fields: [bienId], references: [id])
+  locataireId      String         @map("locataire_id") @db.Uuid
+  locataire        Locataire      @relation(fields: [locataireId], references: [id])
+  dateDebut        DateTime       @map("date_debut") @db.Date
+  dateFin          DateTime       @map("date_fin") @db.Date
+  montantLoyer     Decimal        @map("montant_loyer") @db.Decimal(12, 0)
+  charges          Decimal        @default(0) @db.Decimal(12, 0)
+  montantCaution   Decimal        @map("montant_caution") @db.Decimal(12, 0)
+  avanceLoyer      Decimal?       @default(0) @map("avance_loyer") @db.Decimal(12, 0)
+  periodicite      Periodicite
+  statut           StatutContrat  @default(brouillon)
+  valideParId      String?        @map("valide_par") @db.Uuid
+  valideParUtil    Utilisateur?   @relation("ContratValidePar", fields: [valideParId], references: [id])
+  dateValidation   DateTime?      @map("date_validation")
+  contratParentId  String?        @map("contrat_parent_id") @db.Uuid
+  contratParent    Contrat?       @relation("Renouvellement", fields: [contratParentId], references: [id])
+  renouvellements  Contrat[]      @relation("Renouvellement")
+
+  factures        Facture[]
+  caution         Caution?
+  revisionsLoyer  RevisionLoyer[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  // Un seul contrat actif par bien : appliqué via index partiel PostgreSQL
+  // (migration manuelle, non exprimable nativement en schema.prisma) —
+  // voir dossier/10-mld.md §10.3, migration 0002_contrat_actif_unique.sql
+  @@map("contrats")
+}
+
+model RevisionLoyer {
+  id                String       @id @default(uuid()) @db.Uuid
+  contratId         String       @map("contrat_id") @db.Uuid
+  contrat           Contrat      @relation(fields: [contratId], references: [id])
+  ancienMontant     Decimal      @map("ancien_montant") @db.Decimal(12, 0)
+  nouveauMontant    Decimal      @map("nouveau_montant") @db.Decimal(12, 0)
+  dateModification  DateTime     @map("date_modification") @db.Date
+  motif             String
+  demandeParId      String       @map("demande_par") @db.Uuid
+  demandePar        Utilisateur  @relation("RevisionDemandePar", fields: [demandeParId], references: [id])
+  valideParId       String?      @map("valide_par") @db.Uuid
+  validePar         Utilisateur? @relation("RevisionValidePar", fields: [valideParId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("revisions_loyer")
+}
+
+// --- Cautions (RG-K01 à RG-K05) ---
+
+model Caution {
+  id                  String        @id @default(uuid()) @db.Uuid
+  contratId           String        @unique @map("contrat_id") @db.Uuid
+  contrat             Contrat       @relation(fields: [contratId], references: [id])
+  montantInitial      Decimal       @map("montant_initial") @db.Decimal(12, 0)
+  dateVersement       DateTime      @map("date_versement") @db.Date
+  statut              StatutCaution @default(detenue)
+  montantRetenu       Decimal?      @default(0) @map("montant_retenu") @db.Decimal(12, 0)
+  motifRetenue        String?       @map("motif_retenue")
+  montantRembourse    Decimal?      @map("montant_rembourse") @db.Decimal(12, 0)
+  dateRemboursement   DateTime?     @map("date_remboursement") @db.Date
+  valideParId         String?       @map("valide_par") @db.Uuid
+  valideParUtil       Utilisateur?  @relation("CautionValidePar", fields: [valideParId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("cautions")
+}
+
+// --- Facturation (RG-F01 à RG-F08) ---
+
+model Facture {
+  id             String        @id @default(uuid()) @db.Uuid
+  numero         String        @unique @db.VarChar(30)
+  contratId      String        @map("contrat_id") @db.Uuid
+  contrat        Contrat       @relation(fields: [contratId], references: [id])
+  dateEmission   DateTime      @map("date_emission") @db.Date
+  periode        String        @db.VarChar(20)
+  montantLoyer   Decimal       @map("montant_loyer") @db.Decimal(12, 0)
+  charges        Decimal       @default(0) @db.Decimal(12, 0)
+  arrieres       Decimal       @default(0) @db.Decimal(12, 0)
+  totalAPayer    Decimal       @map("total_a_payer") @db.Decimal(12, 0)
+  montantPaye    Decimal       @default(0) @map("montant_paye") @db.Decimal(12, 0)
+  soldeRestant   Decimal       @map("solde_restant") @db.Decimal(12, 0)
+  statut         StatutFacture @default(emise)
+  dateEcheance   DateTime      @map("date_echeance") @db.Date
+  paiements      Paiement[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([contratId, statut])
+  @@map("factures")
+}
+
+// --- Paiements et quittances (RG-P01 à RG-P06) ---
+
+model Paiement {
+  id             String         @id @default(uuid()) @db.Uuid
+  reference      String         @unique @db.VarChar(30)
+  factureId      String         @map("facture_id") @db.Uuid
+  facture        Facture        @relation(fields: [factureId], references: [id])
+  datePaiement   DateTime       @map("date_paiement") @db.Date
+  montant        Decimal        @db.Decimal(12, 0)
+  mode           ModePaiement
+  encaisseParId  String         @map("encaisse_par") @db.Uuid
+  encaissePar    Utilisateur    @relation("PaiementEncaissePar", fields: [encaisseParId], references: [id])
+  statut         StatutPaiement @default(valide)
+  quittance      Quittance?
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([factureId])
+  @@map("paiements")
+}
+
+model Quittance {
+  id         String   @id @default(uuid()) @db.Uuid
+  numero     String   @unique @db.VarChar(30)
+  paiementId String   @unique @map("paiement_id") @db.Uuid
+  paiement   Paiement @relation(fields: [paiementId], references: [id])
+  date       DateTime @db.Date
+  lienPdf    String?  @map("lien_pdf") @db.VarChar(255)
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("quittances")
+}
+
+// --- Gestion documentaire (RG-D01, RG-D02) ---
+
+model Document {
+  id             String         @id @default(uuid()) @db.Uuid
+  typeDocument   String         @map("type_document") @db.VarChar(50)
+  reference      String         @db.VarChar(150)
+  lienSecurise   String         @map("lien_securise") @db.VarChar(500)
+  entiteType     EntiteDocument @map("entite_type")
+  entiteId       String         @map("entite_id") @db.Uuid
+  dateAjout      DateTime       @default(now()) @map("date_ajout")
+  ajouteParId    String         @map("ajoute_par") @db.Uuid
+  ajoutePar      Utilisateur    @relation("DocumentAjoutePar", fields: [ajouteParId], references: [id])
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@index([entiteType, entiteId])
+  @@map("documents")
+}
+
+// --- Notifications (RG-N01 à RG-N05, D-026, D-027) ---
+
+model Notification {
+  id             String             @id @default(uuid()) @db.Uuid
+  utilisateurId  String             @map("utilisateur_id") @db.Uuid
+  utilisateur    Utilisateur        @relation(fields: [utilisateurId], references: [id])
+  type           TypeNotification
+  titre          String             @db.VarChar(150)
+  message        String
+  canal          CanalNotification?
+  lue            Boolean            @default(false)
+  date           DateTime           @default(now())
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("notifications")
+}
+
+// --- Journal d'audit (RG-U03) ---
+
+model Audit {
+  id              String      @id @default(uuid()) @db.Uuid
+  utilisateurId   String      @map("utilisateur_id") @db.Uuid
+  utilisateur     Utilisateur @relation(fields: [utilisateurId], references: [id])
+  dateHeure       DateTime    @default(now()) @map("date_heure")
+  action          String      @db.VarChar(100)
+  entiteType      String      @map("entite_type") @db.VarChar(30)
+  entiteId        String      @map("entite_id") @db.Uuid
+  ancienneValeur  Json?       @map("ancienne_valeur")
+  nouvelleValeur  Json?       @map("nouvelle_valeur")
+
+  createdAt DateTime @default(now()) @map("created_at")
+
+  @@index([entiteType, entiteId])
+  @@index([dateHeure])
+  @@map("audits")
+}

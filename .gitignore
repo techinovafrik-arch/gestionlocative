@@ -17,6 +17,7 @@ dist/
 # Prisma
 prisma/*.db
 prisma/migrations/dev/
+src/generated/
 
 # Logs
 npm-debug.log*
@@ -35,3 +36,7 @@ Thumbs.db
 # Divers
 coverage/
 .turbo/
+.vercel
+*.pem
+*.tsbuildinfo
+next-env.d.ts
