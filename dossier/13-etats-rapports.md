@@ -62,6 +62,19 @@ Nombre de locataires actifs, nouveaux contrats, contrats arrivant à échéance,
 | Journal des encaissements | Date, locataire, montant, mode paiement, agent | Administrateur, Gérant, Consultation |
 | Relevé des paiements d'un locataire | Historique des règlements, factures associées, soldes | Administrateur, Gérant, Consultation |
 
+### Zone « Factures impayées » de l'écran Factures (D-045, hors CDC initial)
+
+Ajoutée sur demande du client directement sur l'écran de gestion des
+factures (`/factures`), distincte du rapport « Factures impayées »
+ci-dessus : ici, « impayée » désigne toute facture **non soldée** (Émise +
+Partiellement payée + Impayée), pas seulement le statut strict « Impayée ».
+Colonnes : n° facture, période, client, montant dû. Filtres par date
+d'échéance (Jour / Dernier mois glissant / Année en cours / Total),
+pagination de 10 lignes avec sélecteur de page, total des impayées affiché
+en pied de tableau (calculé sur l'ensemble filtré, pas seulement la page
+affichée). Accès identique à la consultation des factures (§14.1, tous
+profils).
+
 ### Rapports cautions (CDC §16.7)
 
 | Rapport | Contenu | Profils |
