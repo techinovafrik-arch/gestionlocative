@@ -84,12 +84,22 @@ export default async function PageCautions() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right">
-                    <Link
-                      href={`/contrats/${caution.contratId}`}
-                      className="text-sm text-blue-700 hover:underline"
-                    >
-                      Voir le contrat
-                    </Link>
+                    <div className="flex justify-end gap-3">
+                      <a
+                        href={`/api/cautions/${caution.id}/pdf`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-sm text-blue-700 hover:underline"
+                      >
+                        Reçu PDF
+                      </a>
+                      <Link
+                        href={`/contrats/${caution.contratId}`}
+                        className="text-sm text-blue-700 hover:underline"
+                      >
+                        Voir le contrat
+                      </Link>
+                    </div>
                   </td>
                 </tr>
               );

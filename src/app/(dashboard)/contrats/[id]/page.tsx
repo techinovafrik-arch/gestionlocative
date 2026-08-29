@@ -87,7 +87,15 @@ export default async function PageDetailContrat({
           <p>
             <span className="font-medium">Caution : </span>
             {Number(contrat.caution.montantInitial).toLocaleString("fr-FR")} FCFA — statut :{" "}
-            {contrat.caution.statut}
+            {contrat.caution.statut}{" "}
+            <a
+              href={`/api/cautions/${contrat.caution.id}/pdf`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-blue-700 hover:underline"
+            >
+              (Reçu PDF)
+            </a>
           </p>
         )}
       </div>

@@ -151,3 +151,23 @@ Pas de mention RCCM/NCC/TVA (D-034).
 │ Mode de paiement : [mode]               │
 └────────────────────────────────────────┘
 ```
+
+### Reçu de caution (D-044, hors sprint planifié)
+
+Document non prévu par le CDC initial (contrairement à la quittance de
+loyer) — ajouté sur demande du client. Couvre uniquement le versement de la
+caution à la signature (RG-K01, RG-K04) ; le remboursement/la retenue à la
+sortie restent tracés via le suivi des cautions (`/cautions`) et le rapport
+« État des cautions » ci-dessus, sans document PDF dédié à ce stade.
+
+```
+┌────────────────────────────────────────┐
+│ [Logo CIMEC]      REÇU DE CAUTION       │
+│                    Date : [date]        │
+├────────────────────────────────────────┤
+│ Locataire : [nom]                       │
+│ Bien : [désignation]                    │
+│ Contrat : [numéro]                      │
+│ Montant de la caution reçu : [montant]  │
+└────────────────────────────────────────┘
+```
